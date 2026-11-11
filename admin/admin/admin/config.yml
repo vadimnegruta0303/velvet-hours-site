@@ -1,0 +1,77 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+publish_mode: editorial_workflow
+
+collections:
+  - label: "Band Info"
+    name: "band"
+    files:
+      - label: "Band Settings"
+        name: "band"
+        file: "content/band.json"
+        fields:
+          - { label: "Band Name", name: "name", widget: "string" }
+          - { label: "Tagline", name: "tagline", widget: "string" }
+          - { label: "Hero Text", name: "heroText", widget: "text" }
+          - { label: "About", name: "about", widget: "text" }
+          - { label: "Booking Email", name: "bookingEmail", widget: "string" }
+          - label: "Socials"
+            name: "socials"
+            widget: "object"
+            fields:
+              - { label: "Instagram", name: "instagram", widget: "string", required: false }
+              - { label: "Spotify", name: "spotify", widget: "string", required: false }
+              - { label: "YouTube", name: "youtube", widget: "string", required: false }
+              - { label: "Facebook", name: "facebook", widget: "string", required: false }
+
+  - label: "Tour Dates"
+    name: "tour"
+    files:
+      - label: "Tour List"
+        name: "tour"
+        file: "content/tour.json"
+        fields:
+          - label: "Shows"
+            name: "shows"
+            widget: "list"
+            fields:
+              - { label: "Date", name: "date", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false }
+              - { label: "City", name: "city", widget: "string" }
+              - { label: "Venue", name: "venue", widget: "string" }
+              - { label: "Ticket URL", name: "ticketUrl", widget: "string", required: false }
+
+  - label: "Gallery"
+    name: "gallery"
+    files:
+      - label: "Gallery Images"
+        name: "gallery"
+        file: "content/gallery.json"
+        fields:
+          - label: "Images"
+            name: "images"
+            widget: "list"
+            fields:
+              - { label: "Image", name: "image", widget: "image" }
+              - { label: "Alt text", name: "alt", widget: "string" }
+
+  - label: "Merch"
+    name: "merch"
+    files:
+      - label: "Merch Items"
+        name: "merch"
+        file: "content/merch.json"
+        fields:
+          - label: "Items"
+            name: "items"
+            widget: "list"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Price (€)", name: "price", widget: "number" }
+              - { label: "Category", name: "category", widget: "select", options: ["apparel", "music", "accessories"] }
+              - { label: "Image", name: "image", widget: "image" }
+              - { label: "Stripe Price ID", name: "stripePriceId", widget: "string" }
