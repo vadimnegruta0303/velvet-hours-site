@@ -640,4 +640,31 @@
         setTimeout(() => { window.location.href = 'thanks.html'; }, 800);
       } else {
         const data = await res.json().catch(() => ({}));
-        msg.style.color = '#7a
+        msg.style.color = '#7a1f2b';
+        msg.textContent = (data.errors && data.errors[0] && data.errors[0].message)
+          || 'Something went wrong. Please try again.';
+      }
+    } catch {
+      msg.style.color = '#7a1f2b';
+      msg.textContent = 'Network error. Please try again later.';
+    } finally {
+      subBtn.disabled = false;
+    }
+  });
+</script>
+
+<!-- СКРИПТ ДЛЯ ВОЗВРАТА В АДМИНКУ ПОСЛЕ ЛОГИНА -->
+<script>
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on("init", user => {
+      if (!user) {
+        window.netlifyIdentity.on("login", () => {
+          document.location.href = "/admin/";
+        });
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
