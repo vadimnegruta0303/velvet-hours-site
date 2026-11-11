@@ -1,5 +1,6 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: vadimnegruta0303/velvet-hours-site
   branch: main
 
 media_folder: "images/uploads"
