@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Velvet Hours — Official Site</title>
 
+<!-- Виджет Netlify Identity для корректного возврата в админку -->
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
 <link id="lecart-stylesheet" rel="stylesheet" href="https://unpkg.com/lecart/dist/lecart.css">
 <script src="https://unpkg.com/lecart/dist/lecart.min.js"></script>
 
@@ -646,25 +649,4 @@
       }
     } catch {
       msg.style.color = '#7a1f2b';
-      msg.textContent = 'Network error. Please try again later.';
-    } finally {
-      subBtn.disabled = false;
-    }
-  });
-</script>
-
-<!-- СКРИПТ ДЛЯ ВОЗВРАТА В АДМИНКУ ПОСЛЕ ЛОГИНА -->
-<script>
-  if (window.netlifyIdentity) {
-    window.netlifyIdentity.on("init", user => {
-      if (!user) {
-        window.netlifyIdentity.on("login", () => {
-          document.location.href = "/admin/";
-        });
-      }
-    });
-  }
-</script>
-
-</body>
-</html>
+      msg.textContent = 'Network error. Please try again later
