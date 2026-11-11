@@ -1,12 +1,643 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Content Manager — The Velvet Hours</title>
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Velvet Hours — Official Site</title>
+
+<link id="lecart-stylesheet" rel="stylesheet" href="https://unpkg.com/lecart/dist/lecart.css">
+<script src="https://unpkg.com/lecart/dist/lecart.min.js"></script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --cream: #f3e9d8;
+    --paper: #e8dcc8;
+    --ink: #2b2118;
+    --wine: #7a1f2b;
+    --gold: #b8863b;
+    --muted: #8a7a66;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.65;
+    background-image: radial-gradient(rgba(43,33,24,0.04) 1px, transparent 1px);
+    background-size: 4px 4px;
+  }
+  h1, h2, h3, .logo { font-family: 'Playfair Display', Georgia, serif; }
+  img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1rem 6%;
+    background: rgba(243,233,216,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 2px solid var(--ink);
+  }
+  .logo { font-size: 1.3rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; }
+  .logo span { color: var(--wine); }
+  nav ul { display: flex; gap: 1.6rem; list-style: none; align-items: center; }
+  nav a {
+    color: var(--ink); text-decoration: none; font-size: .78rem;
+    text-transform: uppercase; letter-spacing: 1.5px; transition: color .2s;
+  }
+  nav a:hover { color: var(--wine); }
+  .burger { display: none; font-size: 1.4rem; cursor: pointer; background: none; border: none; color: var(--ink); }
+
+  .cart-btn {
+    background: none; border: 2px solid var(--ink);
+    padding: .5rem .9rem; cursor: pointer; font-family: inherit;
+    font-size: .9rem; transition: .2s; color: var(--ink);
+  }
+  .cart-btn:hover { background: var(--ink); color: var(--cream); }
+
+  .hero {
+    min-height: 100vh;
+    display: grid; grid-template-columns: 1.2fr 1fr; align-items: center;
+    gap: 3rem; padding: 7rem 6% 4rem;
+  }
+  .hero-text h1 { font-size: clamp(2.8rem, 7vw, 5.5rem); line-height: 1.05; letter-spacing: -1px; margin-bottom: 1rem; }
+  .hero-text h1 em { color: var(--wine); font-style: italic; }
+  .hero-text p { color: var(--muted); max-width: 420px; margin-bottom: 2rem; font-size: 1.05rem; }
+  .tagline {
+    display: inline-block; font-size: .75rem; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--wine);
+    border-top: 1px solid var(--wine); border-bottom: 1px solid var(--wine);
+    padding: .3rem 0; margin-bottom: 1.5rem;
+  }
+  .btn {
+    display: inline-block; padding: .85rem 2.2rem;
+    background: var(--ink); color: var(--cream); text-decoration: none;
+    font-size: .78rem; letter-spacing: 2px; text-transform: uppercase;
+    border: 2px solid var(--ink); transition: .25s; cursor: pointer;
+  }
+  .btn:hover { background: var(--wine); border-color: var(--wine); }
+  .btn-outline { background: transparent; color: var(--ink); margin-left: .8rem; }
+  .btn-outline:hover { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+
+  .vinyl {
+    width: min(100%, 380px); aspect-ratio: 1; justify-self: center;
+    border-radius: 50%;
+    background: repeating-radial-gradient(circle at center, #1a1512 0 2px, #241d18 2px 4px);
+    box-shadow: 0 25px 60px rgba(43,33,24,0.4);
+    display: flex; align-items: center; justify-content: center;
+    position: relative; animation: spin 14s linear infinite;
+  }
+  .vinyl::before {
+    content: ''; width: 34%; aspect-ratio: 1; border-radius: 50%;
+    background: var(--wine); border: 8px solid var(--gold);
+    box-shadow: inset 0 0 0 6px var(--wine);
+  }
+  .vinyl::after { content: ''; position: absolute; width: 8px; height: 8px; border-radius: 50%; background: var(--cream); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  section { padding: 5rem 6%; max-width: 1200px; margin: 0 auto; }
+  h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin-bottom: .5rem; }
+  .sub { color: var(--muted); font-size: .85rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3rem; display: block; }
+
+  .reveal { opacity: 0; transform: translateY(40px); transition: opacity .8s ease, transform .8s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .vinyl { animation: none; }
+  }
+
+  .about { display: grid; grid-template-columns: 1fr 1.2fr; gap: 3rem; align-items: center; }
+  .about-photo {
+    aspect-ratio: 4/5; background: var(--paper);
+    border: 2px solid var(--ink); box-shadow: 10px 10px 0 var(--wine);
+    overflow: hidden;
+  }
+  .about p { margin-bottom: 1rem; color: #4a3d30; }
+
+  .music-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 2rem; margin-bottom: 2.5rem; }
+  .music-card {
+    background: var(--paper); border: 2px solid var(--ink);
+    padding: 2rem; text-align: center; transition: transform .2s;
+  }
+  .music-card:hover { transform: translateY(-5px); }
+  .music-card .icon { font-size: 2.6rem; margin-bottom: 1rem; }
+  .music-card h3 { font-size: 1.3rem; margin-bottom: .4rem; }
+  .music-card p { color: var(--muted); font-size: .9rem; margin-bottom: 1.5rem; }
+  .music-card a {
+    display: inline-block; padding: .7rem 1.8rem; border: 2px solid var(--ink);
+    text-decoration: none; color: var(--ink); font-size: .72rem; letter-spacing: 2px;
+    text-transform: uppercase; transition: .2s;
+  }
+  .music-card a:hover { background: var(--wine); color: var(--cream); border-color: var(--wine); }
+  .spotify-embed { border: 2px solid var(--ink); background: var(--paper); padding: .5rem; }
+  .spotify-embed iframe { display: block; border-radius: 8px; }
+
+  .tour-row {
+    display: grid; grid-template-columns: 130px 1fr auto; align-items: center; gap: 1.5rem;
+    padding: 1.4rem 0; border-bottom: 1px solid rgba(43,33,24,0.2); transition: background .2s;
+  }
+  .tour-row:hover { background: rgba(122,31,43,0.04); }
+  .tour-date { font-weight: 700; color: var(--wine); letter-spacing: 1px; font-size: .9rem; }
+  .tour-city { font-size: 1.15rem; font-weight: 700; }
+  .tour-venue { color: var(--muted); font-size: .85rem; }
+  .tour-link {
+    padding: .55rem 1.6rem; border: 2px solid var(--ink); text-decoration: none;
+    color: var(--ink); font-size: .7rem; letter-spacing: 2px; text-transform: uppercase;
+    transition: .2s; white-space: nowrap;
+  }
+  .tour-link:hover { background: var(--ink); color: var(--cream); }
+
+  .gallery { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+  .gallery figure {
+    aspect-ratio: 1; border: 2px solid var(--ink); overflow: hidden;
+    transition: .3s; position: relative; cursor: zoom-in;
+  }
+  .gallery figure:hover { transform: scale(1.03); box-shadow: 6px 6px 0 var(--wine); z-index: 2; }
+  .gallery figure:first-child { grid-column: span 2; aspect-ratio: 2/1; }
+  .gallery img { transition: transform .4s; }
+  .gallery figure:hover img { transform: scale(1.08); }
+
+  .lightbox {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(20,15,10,0.94);
+    display: none; align-items: center; justify-content: center;
+    padding: 2rem; cursor: zoom-out;
+  }
+  .lightbox.open { display: flex; animation: fadeIn .3s ease; }
+  .lightbox img {
+    max-width: 92vw; max-height: 88vh; width: auto; height: auto;
+    object-fit: contain; border: 3px solid var(--cream);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+  }
+  .lightbox-close {
+    position: absolute; top: 1.5rem; right: 2rem;
+    background: none; border: none; color: var(--cream);
+    font-size: 2.5rem; cursor: pointer; line-height: 1; font-family: inherit;
+  }
+  .lightbox-close:hover { color: var(--gold); }
+  .lightbox-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: rgba(243,233,216,0.15); border: none; color: var(--cream);
+    font-size: 2rem; width: 56px; height: 56px; border-radius: 50%;
+    cursor: pointer; transition: .2s; display: flex; align-items: center; justify-content: center;
+  }
+  .lightbox-nav:hover { background: rgba(243,233,216,0.3); }
+  .lightbox-prev { left: 1.5rem; }
+  .lightbox-next { right: 1.5rem; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .merch-filters { display: flex; gap: .8rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+  .merch-filters button {
+    padding: .6rem 1.6rem; background: transparent; border: 2px solid var(--ink);
+    font-family: inherit; font-size: .75rem; letter-spacing: 2px;
+    text-transform: uppercase; cursor: pointer; transition: .2s; color: var(--ink);
+  }
+  .merch-filters button:hover,
+  .merch-filters button.active { background: var(--ink); color: var(--cream); }
+
+  .merch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 2rem; }
+  .merch-item { background: var(--paper); border: 2px solid var(--ink); padding: 1.5rem; text-align: center; }
+  .merch-item.hidden { display: none; }
+  .merch-img { aspect-ratio: 1; background: var(--cream); margin-bottom: 1.2rem; overflow: hidden; border: 1px solid rgba(43,33,24,0.15); }
+  .merch-item h3 { font-size: 1.1rem; margin-bottom: .3rem; }
+  .merch-price { color: var(--wine); font-weight: 700; margin-bottom: 1rem; }
+
+  .add-to-cart {
+    padding: .7rem 1.8rem; background: var(--ink); color: var(--cream);
+    border: 2px solid var(--ink); font-family: inherit;
+    font-size: .72rem; letter-spacing: 2px; text-transform: uppercase;
+    cursor: pointer; transition: .2s; width: 100%;
+  }
+  .add-to-cart:hover { background: var(--wine); border-color: var(--wine); }
+
+  .newsletter {
+    background: var(--paper); border: 2px solid var(--ink);
+    padding: 3rem 6%; text-align: center; max-width: 720px; margin: 0 auto;
+  }
+  .newsletter h2 { margin-bottom: .5rem; }
+  .newsletter p { color: var(--muted); margin-bottom: 1.8rem; }
+  .newsletter form { display: flex; gap: .6rem; max-width: 460px; margin: 0 auto; flex-wrap: wrap; justify-content: center; }
+  .newsletter input[type="email"] {
+    flex: 1; min-width: 220px; padding: .85rem 1rem;
+    border: 2px solid var(--ink); background: var(--cream);
+    font-family: inherit; font-size: .95rem; color: var(--ink);
+  }
+  .newsletter input[type="email"]:focus { outline: none; border-color: var(--wine); }
+  .newsletter button {
+    padding: .85rem 2rem; background: var(--ink); color: var(--cream);
+    border: 2px solid var(--ink); font-family: inherit;
+    font-size: .78rem; letter-spacing: 2px; text-transform: uppercase;
+    cursor: pointer; transition: .2s;
+  }
+  .newsletter button:hover { background: var(--wine); border-color: var(--wine); }
+  .newsletter button:disabled { opacity: .5; cursor: wait; }
+  .form-msg { margin-top: 1rem; font-size: .9rem; color: var(--wine); min-height: 1.2rem; }
+
+  .booking { background: var(--ink); color: var(--cream); padding: 4rem 6%; text-align: center; max-width: none; }
+  .booking h2 { color: var(--cream); }
+  .booking p { color: #bfae98; max-width: 560px; margin: 0 auto 2rem; }
+  .booking a.mail {
+    display: inline-block; font-size: clamp(1.2rem, 3vw, 1.8rem);
+    color: var(--gold); text-decoration: none;
+    border-bottom: 2px solid var(--gold); padding-bottom: .3rem; margin-bottom: 2rem;
+  }
+  .booking a.mail:hover { color: var(--cream); border-color: var(--cream); }
+  .socials { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+  .socials a {
+    color: var(--cream); text-decoration: none;
+    border: 1px solid rgba(243,233,216,0.3);
+    padding: .6rem 1.4rem; font-size: .72rem;
+    letter-spacing: 2px; text-transform: uppercase; transition: .2s;
+  }
+  .socials a:hover { background: var(--cream); color: var(--ink); }
+
+  footer { text-align: center; padding: 1.5rem; font-size: .75rem; letter-spacing: 1px; color: var(--muted); border-top: 1px solid rgba(43,33,24,0.15); }
+
+  @media (max-width: 820px) {
+    nav ul {
+      display: none; position: absolute; top: 100%; left: 0; right: 0;
+      flex-direction: column; background: var(--cream); padding: 1.5rem 6%; gap: 1.2rem;
+      border-bottom: 2px solid var(--ink);
+    }
+    nav ul.open { display: flex; }
+    .burger { display: block; }
+    .hero { grid-template-columns: 1fr; text-align: center; padding-top: 6rem; }
+    .hero-text p { margin: 0 auto 2rem; }
+    .vinyl { order: -1; width: 240px; }
+    .about { grid-template-columns: 1fr; }
+    .about-photo { max-width: 320px; margin: 0 auto; }
+    .tour-row { grid-template-columns: 1fr auto; }
+    .tour-date { grid-column: span 2; }
+    .gallery { grid-template-columns: repeat(2,1fr); }
+    .gallery figure:first-child { grid-column: span 2; }
+    .lightbox-nav { width: 44px; height: 44px; font-size: 1.4rem; }
+  }
+</style>
 </head>
 <body>
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
-</body>
-</html>
+
+<nav>
+  <div class="logo">The Velvet <span>Hours</span></div>
+  <ul id="menu">
+    <li><a href="#about">About</a></li>
+    <li><a href="#music">Music</a></li>
+    <li><a href="#tour">Tour</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#merch">Merch</a></li>
+    <li><a href="#booking">Booking</a></li>
+    <li>
+      <button class="cart-btn" data-lecart-open aria-label="Open cart">🛒</button>
+    </li>
+  </ul>
+  <button class="burger" onclick="document.getElementById('menu').classList.toggle('open')">☰</button>
+</nav>
+
+<header class="hero">
+  <div class="hero-text">
+    <span class="tagline" id="hero-tagline">Pop · Est. 2021</span>
+    <h1 id="hero-name">The Velvet <em>Hours</em></h1>
+    <p id="hero-desc">Warm analog pop for late nights and slow mornings. New album “Golden Static” out now.</p>
+    <a href="#music" class="btn">Listen</a>
+    <a href="#tour" class="btn btn-outline">Tour Dates</a>
+  </div>
+  <div class="vinyl" aria-hidden="true"></div>
+</header>
+
+<section id="about" class="reveal">
+  <h2>About the Band</h2>
+  <span class="sub">Three voices, one groove</span>
+  <div class="about">
+    <div class="about-photo">
+      <img src="https://picsum.photos/seed/velvetband/600/750" alt="The Velvet Hours band photo">
+    </div>
+    <div>
+      <p id="about-text"></p>
+    </div>
+  </div>
+</section>
+
+<section id="music" class="reveal">
+  <h2>Music</h2>
+  <span class="sub">Stream the new album</span>
+  <div class="music-cards">
+    <div class="music-card">
+      <div class="icon">🎧</div>
+      <h3>Spotify</h3>
+      <p>Stream “Golden Static” and all previous releases.</p>
+      <a id="link-spotify" href="https://open.spotify.com" target="_blank" rel="noopener">Listen on Spotify</a>
+    </div>
+    <div class="music-card">
+      <div class="icon">▶</div>
+      <h3>YouTube</h3>
+      <p>Official videos, live sessions and behind the scenes.</p>
+      <a id="link-youtube" href="https://youtube.com" target="_blank" rel="noopener">Watch on YouTube</a>
+    </div>
+  </div>
+  <div class="spotify-embed">
+    <iframe
+      style="border-radius:8px"
+      src="https://open.spotify.com/embed/playlist/37i9dQZF1DXcBWIGoYBM5M?utm_source=generator&theme=0"
+      width="100%" height="352" frameBorder="0"
+      allowfullscreen=""
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      loading="lazy"
+      title="Spotify player — The Velvet Hours">
+    </iframe>
+  </div>
+</section>
+
+<section id="tour" class="reveal">
+  <h2>Tour Dates</h2>
+  <span class="sub">Spring 2026</span>
+  <div id="tour-list"></div>
+</section>
+
+<section id="gallery" class="reveal">
+  <h2>Gallery</h2>
+  <span class="sub">On stage & in the studio</span>
+  <div class="gallery" id="gallery-grid"></div>
+</section>
+
+<section id="merch" class="reveal">
+  <h2>Merch</h2>
+  <span class="sub">Limited runs, always</span>
+
+  <div class="merch-filters">
+    <button data-filter="all" class="active">All</button>
+    <button data-filter="apparel">Apparel</button>
+    <button data-filter="music">Music</button>
+    <button data-filter="accessories">Accessories</button>
+  </div>
+
+  <div class="merch-grid" id="merch-grid"></div>
+</section>
+
+<section class="newsletter reveal" id="newsletter">
+  <h2>Stay in the Loop</h2>
+  <p>Get tour announcements, new releases and exclusive merch drops straight to your inbox.</p>
+  <form id="subscribe-form" novalidate>
+    <input type="email" id="email" name="email" placeholder="your@email.com" required aria-label="Email address">
+    <input type="hidden" name="_next" value="thanks.html">
+    <button type="submit" id="subscribe-btn">Subscribe</button>
+  </form>
+  <div class="form-msg" id="form-msg" role="status" aria-live="polite"></div>
+</section>
+
+<section id="booking" class="booking reveal">
+  <h2>Booking & Press</h2>
+  <p>For live bookings, interviews and collaborations, reach out directly — we answer everything ourselves.</p>
+  <a class="mail" id="booking-mail" href="mailto:booking@velvethours.com"></a>
+  <div class="socials" id="socials-list"></div>
+</section>
+
+<footer>© 2026 The Velvet Hours · All rights reserved</footer>
+
+<div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Image viewer">
+  <button class="lightbox-close" id="lightbox-close" aria-label="Close">×</button>
+  <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="Previous image">‹</button>
+  <img id="lightbox-img" src="" alt="">
+  <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="Next image">›</button>
+</div>
+
+<script>
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;');
+  }
+  function formatDate(iso) {
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d)) return iso;
+    return d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).toUpperCase();
+  }
+
+  document.querySelectorAll('nav a[href^="#"]').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      document.querySelector(link.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('menu').classList.remove('open');
+    });
+  });
+
+  const revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => io.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('visible'));
+  }
+
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+  let galleryFigures = [];
+  let currentIndex = 0;
+
+  function bindLightbox() {
+    galleryFigures = [...document.querySelectorAll('#gallery-grid figure')];
+    galleryFigures.forEach((fig, i) => {
+      fig.addEventListener('click', () => openLightbox(i));
+    });
+  }
+  function openLightbox(index) {
+    currentIndex = index;
+    const img = galleryFigures[index].querySelector('img');
+    lightboxImg.src = img.src;
+    lightboxImg.alt = img.alt;
+    lightbox.classList.add('open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    lightbox.classList.remove('open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+  function showNext(step) {
+    if (!galleryFigures.length) return;
+    currentIndex = (currentIndex + step + galleryFigures.length) % galleryFigures.length;
+    const img = galleryFigures[currentIndex].querySelector('img');
+    lightboxImg.src = img.src;
+    lightboxImg.alt = img.alt;
+  }
+
+  document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+  document.getElementById('lightbox-prev').addEventListener('click', e => { e.stopPropagation(); showNext(-1); });
+  document.getElementById('lightbox-next').addEventListener('click', e => { e.stopPropagation(); showNext(1); });
+  lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+
+  document.addEventListener('keydown', e => {
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') showNext(-1);
+    if (e.key === 'ArrowRight') showNext(1);
+  });
+
+  function bindMerchFilter() {
+    const filterButtons = document.querySelectorAll('.merch-filters button');
+    const merchItems = document.querySelectorAll('#merch-grid .merch-item');
+
+    filterButtons.forEach(btn => {
+      btn.onclick = () => {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+
+        merchItems.forEach(item => {
+          if (filter === 'all' || item.dataset.category === filter) {
+            item.classList.remove('hidden');
+          } else {
+            item.classList.add('hidden');
+          }
+        });
+      };
+    });
+  }
+
+  const LECART_API_KEY = 'lecart_xxxxx'; // <-- ЗАМЕНИ
+
+  document.addEventListener('DOMContentLoaded', function () {
+    if (typeof LeCart === 'undefined') {
+      console.warn('LeCart не загружен.');
+      return;
+    }
+    LeCart.init({
+      lecartApiKey: LECART_API_KEY,
+      checkoutEndpoint: 'https://api.getlecart.com/create-checkout',
+      currency: 'EUR',
+      language: 'en',
+      theme: 'light',
+      position: 'right'
+    });
+  });
+
+  async function loadSiteContent() {
+    try {
+      const bandRes = await fetch('/content/band.json', { cache: 'no-store' });
+      if (bandRes.ok) {
+        const band = await bandRes.json();
+
+        document.getElementById('hero-tagline').textContent = band.tagline || '';
+        document.getElementById('hero-name').innerHTML =
+          (band.name || '').replace(/(\S+)$/, '<em>$1</em>');
+        document.getElementById('hero-desc').textContent = band.heroText || '';
+        document.getElementById('about-text').textContent = band.about || '';
+
+        const mail = document.getElementById('booking-mail');
+        mail.href = 'mailto:' + (band.bookingEmail || '');
+        mail.textContent = band.bookingEmail || '';
+
+        const socialsEl = document.getElementById('socials-list');
+        if (band.socials) {
+          socialsEl.innerHTML = Object.entries(band.socials)
+            .filter(([, url]) => url && url !== '#')
+            .map(([name, url]) => `<a href="${esc(url)}" target="_blank" rel="noopener">${name[0].toUpperCase() + name.slice(1)}</a>`)
+            .join('');
+        }
+        if (band.socials?.spotify && band.socials.spotify !== '#') {
+          document.getElementById('link-spotify').href = band.socials.spotify;
+        }
+        if (band.socials?.youtube && band.socials.youtube !== '#') {
+          document.getElementById('link-youtube').href = band.socials.youtube;
+        }
+      }
+
+      const tourRes = await fetch('/content/tour.json', { cache: 'no-store' });
+      if (tourRes.ok) {
+        const tour = await tourRes.json();
+        const shows = tour.shows || [];
+        document.getElementById('tour-list').innerHTML = shows.map(t => `
+          <div class="tour-row">
+            <span class="tour-date">${esc(formatDate(t.date))}</span>
+            <span><div class="tour-city">${esc(t.city)}</div><div class="tour-venue">${esc(t.venue)}</div></span>
+            <a href="${esc(t.ticketUrl || '#')}" class="tour-link">Tickets</a>
+          </div>
+        `).join('');
+      }
+
+      const galleryRes = await fetch('/content/gallery.json', { cache: 'no-store' });
+      if (galleryRes.ok) {
+        const gallery = await galleryRes.json();
+        const images = gallery.images || [];
+        document.getElementById('gallery-grid').innerHTML = images.map(g => `
+          <figure><img src="${esc(g.image)}" alt="${esc(g.alt || '')}"></figure>
+        `).join('');
+        bindLightbox();
+      }
+
+      const merchRes = await fetch('/content/merch.json', { cache: 'no-store' });
+      if (merchRes.ok) {
+        const merch = await merchRes.json();
+        const items = merch.items || [];
+        document.getElementById('merch-grid').innerHTML = items.map(m => `
+          <div class="merch-item" data-category="${esc(m.category)}">
+            <div class="merch-img"><img src="${esc(m.image)}" alt="${esc(m.title)}"></div>
+            <h3>${esc(m.title)}</h3>
+            <div class="merch-price">€${m.price}</div>
+            <button class="add-to-cart"
+              data-lecart-add
+              data-stripe-price-id="${esc(m.stripePriceId)}"
+              data-product-name="${esc(m.title)}"
+              data-product-price="${m.price}"
+              data-product-image="${esc(m.image)}">
+              Add to Cart
+            </button>
+          </div>
+        `).join('');
+        bindMerchFilter();
+      }
+    } catch (err) {
+      console.warn('Content load error:', err);
+    }
+  }
+
+  loadSiteContent();
+
+  const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID'; // <-- ЗАМЕНИ
+
+  const form = document.getElementById('subscribe-form');
+  const email = document.getElementById('email');
+  const msg = document.getElementById('form-msg');
+  const subBtn = document.getElementById('subscribe-btn');
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const value = email.value.trim();
+    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+    if (!valid) {
+      msg.style.color = '#7a1f2b';
+      msg.textContent = 'Please enter a valid email address.';
+      email.focus();
+      return;
+    }
+    if (FORMSPREE_ENDPOINT.includes('YOUR_FORM_ID')) {
+      msg.style.color = '#2b2118';
+      msg.textContent = 'Demo mode: set your Formspree endpoint to enable real subscriptions.';
+      form.reset();
+      return;
+    }
+    subBtn.disabled = true;
+    msg.style.color = '#8a7a66';
+    msg.textContent = 'Subscribing…';
+
+    try {
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: new FormData(form)
+      });
+      if (res.ok) {
+        msg.style.color = '#2b2118';
+        msg.textContent = 'Thanks! Redirecting…';
+        setTimeout(() => { window.location.href = 'thanks.html'; }, 800);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        msg.style.color = '#7a
