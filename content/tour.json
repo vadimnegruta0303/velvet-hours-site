@@ -1,0 +1,9 @@
+{
+  "shows": [
+    { "date": "2026-03-14", "city": "Chișinău", "venue": "Art-Labyrinth Club", "ticketUrl": "#" },
+    { "date": "2026-03-21", "city": "Bucharest", "venue": "Club Control", "ticketUrl": "#" },
+    { "date": "2026-04-04", "city": "Warsaw", "venue": "Proxima", "ticketUrl": "#" },
+    { "date": "2026-04-18", "city": "Prague", "venue": "Lucerna Music Bar", "ticketUrl": "#" },
+    { "date": "2026-05-02", "city": "Vienna", "venue": "Chelsea", "ticketUrl": "#" }
+  ]
+}
