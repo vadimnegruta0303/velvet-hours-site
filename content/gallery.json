@@ -1,8 +1,24 @@
 {
   "images": [
-    { "image": "https://picsum.photos/seed/velvet1/900/450", "alt": "Live show wide shot" },
-    { "image": "https://picsum.photos/seed/velvet2/600/600", "alt": "Band on stage" },
-    { "image": "https://picsum.photos/seed/velvet3/600/600", "alt": "Studio session" },
-    { "image": "https://picsum.photos/seed/velvet4/600/600", "alt": "Crowd at concert" }
+    {
+      "image": "https://picsum.photos/seed/velvet1/900/450",
+      "alt": "Live show wide shot"
+    },
+    {
+      "image": "https://picsum.photos/seed/velvet2/600/600",
+      "alt": "Band on stage"
+    },
+    {
+      "image": "https://picsum.photos/seed/velvet3/600/600",
+      "alt": "Studio session"
+    },
+    {
+      "image": "https://picsum.photos/seed/velvet4/600/600",
+      "alt": "Crowd at concert"
+    },
+    {
+      "image": "/images/uploads/the-velvet-hours-velvet-fever.jpeg",
+      "alt": "Velvet Fever single cover"
+    }
   ]
 }
