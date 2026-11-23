@@ -2,14 +2,13 @@
   "name": "The Velvet Hours",
   "tagline": "Retro-R&B · Est. 2021",
   "heroText": "Warm analog R&B for late nights and slow mornings. New single «Velvet Fever» out now.",
-  "about": "The Velvet Hours is a trio blending 80s sophisti-pop with modern R&B. Formed in 2021, the band is known for intimate live shows and their signature dusty vinyl sound",
-  "aboutImage": "/images/uploads/the-velvet-hours-velvet-fever.jpeg",
+  "about": "Formed in 2021, The Velvet Hours are a three-piece blending the polished glow of ’80s sophisti-pop with the warmth and pulse of modern R&B. Their sound pairs intimate vocals and rich harmonies with warm analog textures and a soft, vinyl-dusted edge. Made for late nights and slow mornings, their songs feel both timeless and quietly close. Their latest album, Golden Static, is out now.",
   "bookingEmail": "booking@velvethours.com",
-  "aboutImage": "/images/uploads/твоя-картинка.jpg",
   "socials": {
     "instagram": "https://instagram.com",
     "spotify": "https://open.spotify.com",
     "youtube": "https://youtube.com",
     "facebook": "https://facebook.com"
-  }
+  },
+  "aboutImage": "/images/uploads/твоя-картинка.jpg"
 }
